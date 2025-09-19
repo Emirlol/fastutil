@@ -1333,6 +1333,7 @@ public class OPEN_HASH_MAP KEY_VALUE_GENERIC extends ABSTRACT_MAP KEY_VALUE_GENE
 		return size == 0;
 	}
 
+#ifndef Linked
 	@Override
 	public void forEach(final EntryConsumer KEY_VALUE_GENERIC consumer) {
 		if (containsNullKey) {
@@ -1344,7 +1345,7 @@ public class OPEN_HASH_MAP KEY_VALUE_GENERIC extends ABSTRACT_MAP KEY_VALUE_GENE
 				consumer.accept(key[pos], value[pos]);
 			}
 	}
-
+#endif
 
 	/** The entry class for a hash map does not record key and value, but
 	 * rather the position in the hash table of the corresponding entry. This
