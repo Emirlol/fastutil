@@ -137,7 +137,7 @@ public final class MAPS {
 		public VALUE_COLLECTION VALUE_GENERIC values() { return VALUE_SETS.EMPTY_SET; }
 
 		@Override
-		public void forEach(final java.util.function.BiConsumer<? super KEY_GENERIC_CLASS, ? super VALUE_GENERIC_CLASS> consumer) { }
+		public void forEach(final EntryConsumer KEY_VALUE_GENERIC consumer) { }
 
 		@Override
 		public Object clone() { return EMPTY_MAP; }
@@ -356,7 +356,7 @@ public final class MAPS {
 		public VALUE_GENERIC_TYPE getOrDefault(final KEY_TYPE key, final VALUE_GENERIC_TYPE defaultValue) { synchronized(sync) { return map.getOrDefault(key, defaultValue); } }
 
 		@Override
-		public void forEach(final java.util.function.BiConsumer<? super KEY_GENERIC_CLASS, ? super VALUE_GENERIC_CLASS> action) { synchronized (sync) { map.forEach(action); } }
+		public void forEach(final EntryConsumer KEY_VALUE_GENERIC action) { synchronized (sync) { map.forEach(action); } }
 
 		@Override
 		public void replaceAll(final java.util.function.BiFunction<? super KEY_GENERIC_CLASS, ? super VALUE_GENERIC_CLASS, ? extends VALUE_GENERIC_CLASS> function) { synchronized (sync) { map.replaceAll(function); } }
@@ -561,7 +561,7 @@ public final class MAPS {
 #endif
 
 		@Override
-		public void forEach(final java.util.function.BiConsumer<? super KEY_GENERIC_CLASS, ? super VALUE_GENERIC_CLASS> action) { map.forEach(action); }
+		public void forEach(final EntryConsumer KEY_VALUE_GENERIC action) { map.forEach(action); }
 
 		@Override
 		public void replaceAll(final java.util.function.BiFunction<? super KEY_GENERIC_CLASS, ? super VALUE_GENERIC_CLASS, ? extends VALUE_GENERIC_CLASS> function) { throw new UnsupportedOperationException(); }
