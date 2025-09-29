@@ -567,7 +567,6 @@ public interface MAP KEY_VALUE_GENERIC extends FUNCTION KEY_VALUE_GENERIC, Map<K
 	 * @see java.util.Map#computeIfPresent(Object, java.util.function.BiFunction)
 	 * @since 8.0.0
 	 */
-
 	default VALUE_GENERIC_TYPE COMPUTE_IF_PRESENT(final KEY_GENERIC_TYPE key, final java.util.function.BiFunction<? super KEY_GENERIC_CLASS, ? super VALUE_GENERIC_CLASS, ? extends VALUE_GENERIC_CLASS> remappingFunction) {
 		java.util.Objects.requireNonNull(remappingFunction);
 
@@ -922,7 +921,7 @@ public interface MAP KEY_VALUE_GENERIC extends FUNCTION KEY_VALUE_GENERIC, Map<K
 		}
 #endif
 	}
-	/* A type-specific bi-consumer for the forEach method. */
+	/* A type-specific bi-consumer for the type-specific {@code forEach} method. */
 	interface EntryConsumer KEY_VALUE_GENERIC extends BiConsumer <KEY_GENERIC_CLASS,VALUE_GENERIC_CLASS> {
 #if KEYS_PRIMITIVE || VALUES_PRIMITIVE
 		/**

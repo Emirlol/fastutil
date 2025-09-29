@@ -561,6 +561,7 @@ public final class MAPS {
 #endif
 
 		@Override
+		@SuppressWarnings("deprecation")
 		public void forEach(final EntryConsumer KEY_VALUE_GENERIC action) { map.forEach(action); }
 
 		@Override
