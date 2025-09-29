@@ -26,6 +26,7 @@ import it.unimi.dsi.fastutil.objects.ObjectSet;
 import it.unimi.dsi.fastutil.objects.ObjectIterator;
 #endif
 
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.Map;
 
@@ -317,15 +318,23 @@ public interface MAP KEY_VALUE_GENERIC extends FUNCTION KEY_VALUE_GENERIC, Map<K
 
 	// Defaultable methods
 
-	@Override
-	default void forEach(final java.util.function.BiConsumer<? super KEY_GENERIC_CLASS, ? super VALUE_GENERIC_CLASS> consumer) {
+	default void forEach(final EntryConsumer KEY_VALUE_GENERIC consumer) {
 		final ObjectSet<MAP.Entry KEY_VALUE_GENERIC> entrySet = ENTRYSET();
-		final Consumer<MAP.Entry KEY_VALUE_GENERIC> wrappingConsumer = (entry) -> consumer.accept(KEY2OBJ(entry.ENTRY_GET_KEY()), VALUE2OBJ(entry.ENTRY_GET_VALUE()));
+		final Consumer<MAP.Entry KEY_VALUE_GENERIC> wrappingConsumer = (entry) -> consumer.accept(entry.ENTRY_GET_KEY(), entry.ENTRY_GET_VALUE());
 		if (entrySet instanceof FastEntrySet) {
 			((FastEntrySet KEY_VALUE_GENERIC)entrySet).fastForEach(wrappingConsumer);
 		} else {
 			entrySet.forEach(wrappingConsumer);
 		}
+	}
+
+	/** {@inheritDoc}
+	 * <p>This default implementation just delegates to the corresponding {@link Map} method.
+	 * @deprecated Please use the corresponding type-specific method instead. */
+	@Deprecated
+	@Override
+	default void forEach(final BiConsumer<? super KEY_GENERIC_CLASS, ? super VALUE_GENERIC_CLASS> action) {
+		Map.super.forEach(action);
 	}
 
 
@@ -910,6 +919,43 @@ public interface MAP KEY_VALUE_GENERIC extends FUNCTION KEY_VALUE_GENERIC, Map<K
 		@Override
 		default VALUE_GENERIC_CLASS setValue(final VALUE_GENERIC_CLASS value) {
 			return VALUE2OBJ(setValue(VALUE_CLASS2TYPE(value)));
+		}
+#endif
+	}
+	/* A type-specific bi-consumer for the forEach method. */
+	interface EntryConsumer KEY_VALUE_GENERIC extends BiConsumer <KEY_GENERIC_CLASS,VALUE_GENERIC_CLASS> {
+#if KEYS_PRIMITIVE || VALUES_PRIMITIVE
+		/**
+		 * Performs this operation on the given entry.
+		 *
+		 * @param k the key.
+		 * @param v the value.
+		 */
+		void accept(KEY_GENERIC_TYPE k,VALUE_GENERIC_TYPE v);
+
+		/** {@inheritDoc}
+		 * @deprecated Please use the corresponding type-specific method instead. */
+		@Deprecated
+		@Override
+		default void accept(KEY_GENERIC_CLASS key,VALUE_GENERIC_CLASS value) {
+#if KEYS_PRIMITIVE && VALUES_PRIMITIVE
+			this.accept(key.KEY_VALUE(),value.VALUE_VALUE());
+#elif KEYS_PRIMITIVE
+			this.accept(key.KEY_VALUE(),value);
+#else
+			this.accept(key,value.VALUE_VALUE());
+#endif
+		}
+		default EntryConsumer KEY_VALUE_GENERIC andThen(final EntryConsumer KEY_VALUE_GENERIC after) {
+			java.util.Objects.requireNonNull(after);
+			return (k,v) -> { accept(k,v); after.accept(k,v); };
+		}
+		/** {@inheritDoc}
+		 * @deprecated Please use the corresponding type-specific method instead. */
+		@Deprecated
+		@Override
+		default BiConsumer<KEY_GENERIC_CLASS,VALUE_GENERIC_CLASS> andThen(final BiConsumer<? super KEY_GENERIC_CLASS,? super VALUE_GENERIC_CLASS> after) {
+			return BiConsumer.super.andThen(after);
 		}
 #endif
 	}
