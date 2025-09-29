@@ -15,14 +15,14 @@
  */
 package it.unimi.dsi.fastutil.io;
 
-import it.unimi.dsi.fastutil.bytes.ByteArrays;
-
 import java.io.DataOutput;
 import java.io.IOException;
 import java.io.ObjectOutput;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.nio.charset.Charset;
+
+import it.unimi.dsi.fastutil.bytes.ByteArrays;
 
 /** Simple, fast byte-array output stream that exposes the backing array.
  *
@@ -130,40 +130,40 @@ public class FastByteArrayOutputStream extends MeasurableOutputStream implements
 	}
 
 	/** @see java.io.ByteArrayOutputStream#toString(Charset) */
-	public String toString(Charset charset) {
+	public String toString(final Charset charset) {
 		return new String(array, 0, length, charset);
 	}
 
 	/** @see java.io.ByteArrayOutputStream#writeTo(OutputStream) */
-	public synchronized void writeTo(OutputStream out) throws IOException {
+	public synchronized void writeTo(final OutputStream out) throws IOException {
 		out.write(array, 0, length);
 	}
 
 
 	@Override
-	public void writeBoolean(boolean v) {
+	public void writeBoolean(final boolean v) {
 		write(v?1:0);
 	}
 
 	@Override
-	public void writeByte(int v) {
+	public void writeByte(final int v) {
 		write(v);
 	}
 
 	@Override
-	public void writeShort(int v) {
+	public void writeShort(final int v) {
 		write(v >> 8);
 		write(v);
 	}
 
 	@Override
-	public void writeChar(int v) {
+	public void writeChar(final int v) {
 		write(v >> 8);
 		write(v);
 	}
 
 	@Override
-	public void writeInt(int v) {
+	public void writeInt(final int v) {
 		write(v >> 24);
 		write(v >> 16);
 		write(v >> 8);
@@ -171,18 +171,18 @@ public class FastByteArrayOutputStream extends MeasurableOutputStream implements
 	}
 
 	@Override
-	public void writeLong(long v) {
+	public void writeLong(final long v) {
 		writeInt((int)(v >> 32));
 		writeInt((int) v);
 	}
 
 	@Override
-	public void writeFloat(float v) {
+	public void writeFloat(final float v) {
 		writeInt(Float.floatToIntBits(v));
 	}
 
 	@Override
-	public void writeDouble(double v) {
+	public void writeDouble(final double v) {
 		writeLong(Double.doubleToLongBits(v));
 	}
 
@@ -190,39 +190,40 @@ public class FastByteArrayOutputStream extends MeasurableOutputStream implements
 	 * @deprecated This method is dangerous as it discards the high byte of every character. For UTF-8, use {@link #writeUTF(String)} or {@link #write(byte[]) @code write(s.getBytes(UTF_8))}.
 	 * @see java.io.DataOutputStream#writeBytes(String)
 	 */
+	@Deprecated
 	@Override
-	public void writeBytes(String s) {
+	public void writeBytes(final String s) {
 		for (int i = 0, len = s.length(); i < len; i++){
 			write((byte)s.charAt(i));
 		}
 	}
 
 	@Override
-	public void writeChars(String s) {
+	public void writeChars(final String s) {
 		for (int i = 0, len = s.length(); i < len; i++){
-			int v = s.charAt(i);
+			final int v = s.charAt(i);
 			writeChar(v);
 		}
 	}
 
 	@Override
-	public void writeUTF (String s) {
-		int savePos = position;
+	public void writeUTF (final String s) {
+		final int savePos = position;
 		writeShort(0);// len place holder
 		for (int i = 0, len = s.length(); i < len; i++){
 			writeUtf8Char(s.charAt(i));
 			if (position - savePos > 0xFF_FF + 2){
 				length = position = savePos;// rollback
-				throw new IllegalArgumentException("UTF encoded string too long: %d: %s".formatted(s.length(), s.substring(0, 99)));
+				throw new IllegalArgumentException(String.format("UTF encoded string too long: %d: %s", Integer.valueOf(s.length()), s.substring(0, 99)));
 			}
 		}
-		int len = position - savePos - 2;
+		final int len = position - savePos - 2;
 		array[savePos] = (byte)(len >> 8);
 		array[savePos+1] = (byte)len;
 	}
 
 	/** @see java.io.DataOutputStream#writeUTF(String,DataOutput) */
-	public int writeUtf8Char(char c) {
+	public int writeUtf8Char(final char c) {
 		if (c != 0 && c < 0x80){
 			write(c);
 			return 1;
@@ -240,7 +241,7 @@ public class FastByteArrayOutputStream extends MeasurableOutputStream implements
 
 	/// not efficient! Only added to support custom {@link java.io.Externalizable}
 	@Override
-	public void writeObject(Object obj) throws IOException {
+	public void writeObject(final Object obj) throws IOException {
 		try (ObjectOutputStream oout = new ObjectOutputStream(this)){
 			oout.writeObject(obj);
 			oout.flush();

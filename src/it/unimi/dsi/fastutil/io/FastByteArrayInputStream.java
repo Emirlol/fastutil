@@ -22,12 +22,15 @@ import java.io.ObjectInputStream;
 import java.io.UTFDataFormatException;
 import java.io.UncheckedIOException;
 
-/** Simple, fast and repositionable byte-array input stream.
+/**
+ * Simple, fast and repositionable byte-array input stream with built-in {@link java.io.ObjectInput}
+ * support.
  *
- * <p><strong>Warning</strong>: this class implements the correct semantics
- * of {@link #read(byte[], int, int)} as described in {@link java.io.InputStream}.
- * The implementation given in {@link java.io.ByteArrayInputStream} is broken,
- * but it will never be fixed because it's too late.
+ * <p>
+ * <strong>Warning</strong>: this class implements the correct semantics of
+ * {@link #read(byte[], int, int)} as described in {@link java.io.InputStream}. The implementation
+ * given in {@link java.io.ByteArrayInputStream} is broken, but it will never be fixed because it's
+ * too late.
  *
  * @author Sebastiano Vigna
  */
@@ -140,32 +143,8 @@ public class FastByteArrayInputStream extends MeasurableInputStream implements R
 	}
 
 	@Override
-	public byte[] readAllBytes() {
-		return readNBytes(available());
-	}
-
-	@Override
-	public int readNBytes(byte[] b, int off, int len) {
-		int n = read(b, off, len);
-		return n == -1 ? 0 : n;
-	}
-
-	@Override
-	public int read (byte[] b) {
+	public int read (final byte[] b) {
 		return read(b, 0, b.length);
-	}
-
-	@Override
-	public byte[] readNBytes (int len) {
-		int n = Math.min(len, available());
-		byte[] result = new byte[n];
-		read(result);
-		return result;
-	}
-
-	@Override
-	public void skipNBytes (long n) {
-		skip(n);
 	}
 
 	public int peek() {
@@ -175,17 +154,17 @@ public class FastByteArrayInputStream extends MeasurableInputStream implements R
 
 
 	@Override
-	public void readFully (byte[] b) {
+	public void readFully (final byte[] b) {
 		read(b);
 	}
 
 	@Override
-	public void readFully (byte[] b, int off, int len) {
+	public void readFully (final byte[] b, final int off, final int len) {
 		read(b, off, len);
 	}
 
 	@Override
-	public int skipBytes (int n) {
+	public int skipBytes (final int n) {
 		return (int) skip(n);
 	}
 
@@ -241,7 +220,7 @@ public class FastByteArrayInputStream extends MeasurableInputStream implements R
 
 	@Override  @Deprecated
 	public String readLine () {
-		StringBuilder sb = new StringBuilder(99);
+		final StringBuilder sb = new StringBuilder(99);
 loop:
 		for (int c;;){
 			switch (c = read()){
@@ -260,16 +239,16 @@ loop:
 				sb.append((char) c);
 			}
 		}
-		return sb.isEmpty() ? null : sb.toString();
+		return sb.length() == 0 ? null : sb.toString();
 	}
 
 	@Override
 	public String readUTF () throws UTFDataFormatException {
 		try {
 			return available() > 0 ? DataInputStream.readUTF(this) : null;
-		} catch (UTFDataFormatException badBinaryFormatting){
+		} catch (final UTFDataFormatException badBinaryFormatting){
 			throw badBinaryFormatting;
-		} catch (IOException e){
+		} catch (final IOException e){
 			throw new UncheckedIOException("readUTF @ "+this, e);
 		}
 	}

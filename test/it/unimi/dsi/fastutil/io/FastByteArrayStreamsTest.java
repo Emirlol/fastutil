@@ -1,7 +1,9 @@
 package it.unimi.dsi.fastutil.io;
 
-import it.unimi.dsi.fastutil.bytes.ByteArrays;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -15,10 +17,9 @@ import java.io.UTFDataFormatException;
 import java.nio.charset.StandardCharsets;
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import org.junit.Test;
+
+import it.unimi.dsi.fastutil.bytes.ByteArrays;
 
 /**
  @see FastByteArrayOutputStream
@@ -40,15 +41,15 @@ public class FastByteArrayStreamsTest {
 	}
 
 	@SuppressWarnings("deprecation")
-	public static String toHexString (byte[] buffer, int fromIndex, int length) {
+	public static String toHexString (final byte[] buffer, int fromIndex, int length) {
 		if (length <= 0){ return ""; }
 		length = Math.min(length, buffer.length - fromIndex);
 
-		byte[] buf = new byte[length << 1];// buffer.length * 2
+		final byte[] buf = new byte[length << 1];// buffer.length * 2
 
 		for (int dstIdx = 0, endIndex = fromIndex + length; fromIndex < endIndex; fromIndex++){
-			int nextByte = buffer[fromIndex] & 0xFF;
-			short byteAsTwoHex = HEX_TABLE[nextByte];
+			final int nextByte = buffer[fromIndex] & 0xFF;
+			final short byteAsTwoHex = HEX_TABLE[nextByte];
 			buf[dstIdx++] = (byte)(byteAsTwoHex >> 8);
 			buf[dstIdx++] = (byte)(byteAsTwoHex & 0xFF);
 		}
@@ -56,7 +57,7 @@ public class FastByteArrayStreamsTest {
 		return new String(buf, 0/*hi*/, 0, buf.length);
 	}
 
-	public static String toHexString (byte[] buffer) {
+	public static String toHexString (final byte[] buffer) {
 		return toHexString(buffer, 0, buffer.length);
 	}
 
@@ -81,7 +82,7 @@ public class FastByteArrayStreamsTest {
 
 	static class OpenByteArrayInputStream extends ByteArrayInputStream {
 		public OpenByteArrayInputStream (){ super(ByteArrays.EMPTY_ARRAY); }
-		public void setArray (byte[] array) {
+		public void setArray (final byte[] array) {
 			this.buf = array;
 			this.pos = 0;
 			this.count = buf.length;
@@ -93,24 +94,25 @@ public class FastByteArrayStreamsTest {
 		public OpenByteArrayInputStream in (){ return (OpenByteArrayInputStream) in; }
 	}
 
-	private void reset (DataOutput w) {
-		if (w instanceof FastByteArrayOutputStream x){
-			x.reset();
+	private void reset (final DataOutput w) {
+		if (w instanceof FastByteArrayOutputStream) {
+			((FastByteArrayOutputStream)w).reset();
 		} else {
 			((OpenDataOutputStream) w).out().reset();
 		}
 	}
 
-	private byte[] toByteArray (DataOutput w) {
-		if (w instanceof FastByteArrayOutputStream x){
-			return x.toByteArray();
+	private byte[] toByteArray (final DataOutput w) {
+		if (w instanceof FastByteArrayOutputStream) {
+			return ((FastByteArrayOutputStream)w).toByteArray();
 		} else {
 			return ((OpenDataOutputStream) w).out().toByteArray();
 		}
 	}
 
-	private void setArray (DataInput r, byte[] array) {
-		if (r instanceof FastByteArrayInputStream x){
+	private void setArray (final DataInput r, final byte[] array) {
+		if (r instanceof FastByteArrayInputStream) {
+			final FastByteArrayInputStream x = (FastByteArrayInputStream)r;
 			x.array = array;
 			x.offset = 0;
 			x.position(0);
@@ -123,16 +125,16 @@ public class FastByteArrayStreamsTest {
 
 
 	/// us→us, us→jdk, jdk→us, jdk→jdk (to be 100% sure)
-	void x (String hex, ThrowingConsumer<DataOutput> write, ThrowingConsumer<DataInput> readAndVerify) {
+	void x (String hex, final ThrowingConsumer<DataOutput> write, final ThrowingConsumer<DataInput> readAndVerify) {
 		hex = hex.replaceAll("[\\s_]+", "").trim();
 		try {
-			for (DataOutput w : new DataOutput[]{new FastByteArrayOutputStream(), new OpenDataOutputStream()}){
-				for (DataInput r : new DataInput[]{new FastByteArrayInputStream(ByteArrays.EMPTY_ARRAY), new OpenDataInputStream()}){
+			for (final DataOutput w : new DataOutput[]{new FastByteArrayOutputStream(), new OpenDataOutputStream()}){
+				for (final DataInput r : new DataInput[]{new FastByteArrayInputStream(ByteArrays.EMPTY_ARRAY), new OpenDataInputStream()}){
 					reset(w);
 
 					write.accept(w);//1
 
-					byte[] array = toByteArray(w);
+					final byte[] array = toByteArray(w);
 					assertEquals(hex, toHexString(array));
 					assertEquals(hex.length(), array.length * 2);
 
@@ -141,14 +143,14 @@ public class FastByteArrayStreamsTest {
 					readAndVerify.accept(r);//2
 				}
 			}
-		} catch (Throwable e){
+		} catch (final Throwable e){
 			throw new AssertionError(e);
 		}
 	}
 
 	@Test
 	public void testEOF () throws UTFDataFormatException {
-		FastByteArrayInputStream r = new FastByteArrayInputStream(ByteArrays.EMPTY_ARRAY);
+		final FastByteArrayInputStream r = new FastByteArrayInputStream(ByteArrays.EMPTY_ARRAY);
 		assertEquals(0, r.available());
 		assertEquals(-1, r.read());
 		assertEquals(-1, r.readByte());
@@ -190,7 +192,7 @@ public class FastByteArrayStreamsTest {
 					w.write(new byte[]{0, 0x7f, -1, -1}, 0, 4);
 				},
 				r -> {
-					byte[] b = new byte[4];
+					final byte[] b = new byte[4];
 					r.readFully(b, 0, 0);
 					r.readFully(b, 0, 4);
 					assertEquals(0, b[0]);
@@ -208,7 +210,7 @@ public class FastByteArrayStreamsTest {
 					w.write(new byte[]{0, 0x7f, -1, -1});
 				},
 				r -> {
-					byte[] b = new byte[4];
+					final byte[] b = new byte[4];
 					r.readFully(b);
 					assertEquals(0, b[0]);
 					assertEquals(0x7f, b[1]);
@@ -418,14 +420,14 @@ public class FastByteArrayStreamsTest {
 
 	@Test
 	public void testWriteBytes () {
-		String s = "ISO_8859_1 is equal to Unicode.left(256)!";
+		final String s = "ISO_8859_1 is equal to Unicode.left(256)!";
 		x("4049534f5f383835395f3120697320657175616c20746f20556e69636f64652e6c6566742832353629210d0a",
 				w->{
 					w.writeBytes('@'+ s+ "\r\n");
 				},
 				r -> {
 					assertEquals('@', r.readByte());
-					String z = r.readLine();
+					final String z = r.readLine();
 					assertEquals(s, z);
 				}
 		);
@@ -433,7 +435,7 @@ public class FastByteArrayStreamsTest {
 
 	@Test
 	public void testWriteChars () {
-		String s = "Chars in UTF-16BE 🚀💯!";
+		final String s = "Chars in UTF-16BE 🚀💯!";
 		x("00400043006800610072007300200069006e0020005500540046002d00310036004200450020d83dde80d83ddcaf0021000000170043006800610072007300200069006e0020005500540046002d00310036004200450020d83dde80d83ddcaf0021",
 				w->{
 					w.writeChars('@'+ s+ "\0");// c string
@@ -443,7 +445,7 @@ public class FastByteArrayStreamsTest {
 				r -> {
 					assertEquals('@', r.readChar());
 
-					StringBuilder sb = new StringBuilder();
+					final StringBuilder sb = new StringBuilder();
 					char c;
 					while ((c = r.readChar())!=0)
 						sb.append(c);
@@ -460,7 +462,7 @@ public class FastByteArrayStreamsTest {
 
 	@Test
 	public void testWriteUTF8 () throws UTFDataFormatException {
-		String s = "\0\r\nChars in UTF-8 🚀💯!";
+		final String s = "\0\r\nChars in UTF-8 🚀💯!";
 		assertEquals(23, s.length());
 		assertEquals(27, s.getBytes(StandardCharsets.UTF_8).length);
 		x("0020c0800d0a436861727320696e205554462d3820eda0bdedba80eda0bdedb2af21",
@@ -472,9 +474,9 @@ public class FastByteArrayStreamsTest {
 				}
 		);
 
-		FastByteArrayOutputStream w = new FastByteArrayOutputStream();
+		final FastByteArrayOutputStream w = new FastByteArrayOutputStream();
 		w.writeUTF(s.repeat(100));
-		FastByteArrayInputStream r = new FastByteArrayInputStream(w.toByteArray());
+		final FastByteArrayInputStream r = new FastByteArrayInputStream(w.toByteArray());
 		assertEquals(s.repeat(100), r.readUTF());
 	}
 
@@ -499,17 +501,17 @@ public class FastByteArrayStreamsTest {
 
 	@Test
 	public void testObjectStreams () throws IOException, ClassNotFoundException {
-		FastByteArrayOutputStream w = new FastByteArrayOutputStream();
+		final FastByteArrayOutputStream w = new FastByteArrayOutputStream();
 
-		String s = "Simple Java Object";
+		final String s = "Simple Java Object";
 		w.writeObject(s);
 
 		w.writeObject(Math.PI);
 
-		Map<? extends Serializable,? extends Serializable> m = Map.of("field1", 42, 'c', 17, boolean.class, true);
+		final Map<? extends Serializable,? extends Serializable> m = Map.of("field1", 42, 'c', 17, boolean.class, true);
 		w.writeObject(m);
 
-		FastByteArrayInputStream r = new  FastByteArrayInputStream(w.toByteArray());
+		final FastByteArrayInputStream r = new  FastByteArrayInputStream(w.toByteArray());
 		assertEquals(s, r.readObject());
 		assertEquals(Math.PI, r.readObject());
 		assertEquals(m, r.readObject());
