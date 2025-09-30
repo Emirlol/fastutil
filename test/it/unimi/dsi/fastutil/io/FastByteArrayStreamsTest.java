@@ -12,9 +12,9 @@ import java.io.DataInputStream;
 import java.io.DataOutput;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.io.Serializable;
 import java.io.UTFDataFormatException;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.junit.Test;
@@ -474,10 +474,14 @@ public class FastByteArrayStreamsTest {
 				}
 		);
 
+		String t = s;
+		t = t + t + t + t;
+		t = t + t + t + t;
+		t = t + t + t + t;
 		final FastByteArrayOutputStream w = new FastByteArrayOutputStream();
-		w.writeUTF(s.repeat(100));
+		w.writeUTF(t);
 		final FastByteArrayInputStream r = new FastByteArrayInputStream(w.toByteArray());
-		assertEquals(s.repeat(100), r.readUTF());
+		assertEquals(t, r.readUTF());
 	}
 
 	@Test
@@ -508,7 +512,10 @@ public class FastByteArrayStreamsTest {
 
 		w.writeObject(Math.PI);
 
-		final Map<? extends Serializable,? extends Serializable> m = Map.of("field1", 42, 'c', 17, boolean.class, true);
+		final Map<Object, Object> m = new HashMap<>();
+		m.put("field1", Integer.valueOf(42));
+		m.put(Character.valueOf('c'), Integer.valueOf(17));
+		m.put(boolean.class, Boolean.TRUE);
 		w.writeObject(m);
 
 		final FastByteArrayInputStream r = new  FastByteArrayInputStream(w.toByteArray());
