@@ -1286,7 +1286,7 @@ public class OPEN_HASH_MAP KEY_VALUE_GENERIC extends ABSTRACT_MAP KEY_VALUE_GENE
 #endif
 			if (pos < 0) insert(-pos - 1, k, v);
 			else value[pos] = v;
-			
+
 			return v;
 		}
 
@@ -1334,8 +1334,13 @@ public class OPEN_HASH_MAP KEY_VALUE_GENERIC extends ABSTRACT_MAP KEY_VALUE_GENE
 	}
 
 #ifndef Linked
+	/** {@inheritDoc} */
 	@Override
-	public void forEach(final EntryConsumer KEY_VALUE_GENERIC consumer) {
+#if KEYS_PRIMITIVE || VALUES_PRIMITIVE
+	public void forEach(final PACKAGE.KEY_VALUE_BICONSUMER KEY_VALUE_SUPER_GENERIC consumer) {
+#else
+	public void forEach(final java.util.function.BiConsumer KEY_VALUE_SUPER_GENERIC consumer) {
+#endif
 		if (containsNullKey) {
 			consumer.accept(key[n], value[n]);
 		}
@@ -1803,7 +1808,7 @@ public class OPEN_HASH_MAP KEY_VALUE_GENERIC extends ABSTRACT_MAP KEY_VALUE_GENE
 		public FastEntryIterator(KEY_GENERIC_TYPE from) {
 			super(from);
 		}
-		
+
 		// forEachRemaining inherited from MapIterator superclass.
 
 		@Override
@@ -1981,7 +1986,7 @@ public class OPEN_HASH_MAP KEY_VALUE_GENERIC extends ABSTRACT_MAP KEY_VALUE_GENE
 		public MapEntry next() {
 			return entry = new MapEntry(nextEntry());
 		}
-		
+
 		// forEachRemaining inherited from MapIterator superclass.
 
 		@Override
@@ -2211,8 +2216,8 @@ public class OPEN_HASH_MAP KEY_VALUE_GENERIC extends ABSTRACT_MAP KEY_VALUE_GENE
 
 		@Override
 		public ObjectSpliterator<MAP.Entry KEY_VALUE_GENERIC> spliterator() { return new EntrySpliterator(); }
-		
-		// 
+
+		//
 #endif
 
 		@Override
@@ -2429,7 +2434,7 @@ public class OPEN_HASH_MAP KEY_VALUE_GENERIC extends ABSTRACT_MAP KEY_VALUE_GENE
 		final void acceptOnIndex(final METHOD_ARG_KEY_CONSUMER action, final int index) {
 			action.accept(key[index]);
 		}
-		
+
 
 		@Override
 		public KEY_GENERIC_TYPE NEXT_KEY() { return key[nextEntry()]; }

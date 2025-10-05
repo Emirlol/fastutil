@@ -28,7 +28,7 @@ import it.unimi.dsi.fastutil.bytes.ByteArrays;
  @see ByteArrayOutputStream
  @see ByteArrayInputStream
  */
-@SuppressWarnings({"resource", "IOResourceOpenedButNotSafelyClosed"})
+@SuppressWarnings({ "resource" })
 public class FastByteArrayStreamsTest {
 	/// todo put into {@link it.unimi.dsi.fastutil.bytes.ByteArrays} ?
 	/// @see java.util.HexFormat
@@ -148,6 +148,7 @@ public class FastByteArrayStreamsTest {
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	@Test
 	public void testEOF () throws UTFDataFormatException {
 		final FastByteArrayInputStream r = new FastByteArrayInputStream(ByteArrays.EMPTY_ARRAY);
@@ -503,6 +504,7 @@ public class FastByteArrayStreamsTest {
 		);
 	}
 
+	@SuppressWarnings("boxing")
 	@Test
 	public void testObjectStreams () throws IOException, ClassNotFoundException {
 		final FastByteArrayOutputStream w = new FastByteArrayOutputStream();

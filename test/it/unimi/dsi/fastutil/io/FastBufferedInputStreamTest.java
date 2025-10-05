@@ -239,6 +239,7 @@ public class FastBufferedInputStreamTest {
 		stream.close();
 	}
 
+	@SuppressWarnings("resource")
 	@Test
 	public void testRead() throws IOException {
 		// Reads with length larger than buffer size

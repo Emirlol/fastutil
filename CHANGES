@@ -1,3 +1,9 @@
+8.5.18
+
+- Revised forEach for maps: they now accept a type-specific BiConsumer.
+  Unfortunately, this new setup is not source-compatible with the previous
+  one.
+
 8.5.17
 
 - Type-specific forEach for maps.
