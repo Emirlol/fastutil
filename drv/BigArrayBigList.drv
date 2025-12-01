@@ -368,6 +368,11 @@ public class BIG_ARRAY_BIG_LIST KEY_GENERIC extends ABSTRACT_BIG_LIST KEY_GENERI
 
 	/** Ensures that this big-array big list can contain the given number of entries without resizing.
 	 *
+	 * @implNote
+	 * <p>Contrarily to {@link java.util.ArrayList}, this method does not enlarge the underlying
+	 * array more than the required capacity. Use {@link #grow(int)} to obtain a result
+	 * similar to {@link java.util.ArrayList#ensureCapacity(int)}.
+	 *
 	 * @param capacity the new minimum capacity for this big-array big list.
 	 */
 	SUPPRESS_WARNINGS_KEY_UNCHECKED
