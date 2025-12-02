@@ -471,7 +471,7 @@ public class ARRAY_LIST KEY_GENERIC extends ABSTRACT_LIST KEY_GENERIC implements
 	 * @param capacity the new minimum capacity for this array list.
 	 */
 	SUPPRESS_WARNINGS_KEY_UNCHECKED
-	private void grow(int capacity) {
+	public void grow(int capacity) {
 		if (capacity <= a.length) return;
 		if (a != ARRAYS.DEFAULT_EMPTY_ARRAY)
 			capacity = (int)Math.max(Math.min((long)a.length + (a.length >> 1), it.unimi.dsi.fastutil.Arrays.MAX_ARRAY_SIZE), capacity);
